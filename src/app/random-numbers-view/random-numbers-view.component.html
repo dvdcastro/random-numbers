@@ -1,0 +1,16 @@
+<canvas #canvas width="{{canvasWidth}}" height="{{canvasHeight}}"></canvas>
+<br>
+<label for="amountInput">Dot Amount:</label>
+<input id="amountInput" [(ngModel)]="amount" />
+<br>
+
+<label for="radiusInput">Circle size:</label>
+<input id="radiusInput" [(ngModel)]="circleSize" />
+<br>
+
+
+<label for="borderInput">Border size:</label>
+<input id="borderInput" [(ngModel)]="border" />
+<br>
+
+<button (click)="generate()">Generate</button>
