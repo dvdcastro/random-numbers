@@ -12,7 +12,7 @@ export class RandomNumbersViewComponent implements OnInit {
   @ViewChild('canvas', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
 
-  amount: number;
+  amount: number = 100;
 
   private ctx: CanvasRenderingContext2D;
   canvasWidth: number = 800;
@@ -26,11 +26,11 @@ export class RandomNumbersViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx = this.canvas.nativeElement.getContext('2d');
+    this.generate();
   }
 
   generate() {
-    this.cleanCanvas();
-    this.randomNumbersService.getLocations(this.amount, 40, this.canvasWidth, this.canvasHeight)
+    this.randomNumbersService.getLocations(this.amount, this.border, this.canvasWidth, this.canvasHeight)
       .subscribe((dotLocations : DotLocation[]) => {
       this.cleanCanvas();
       dotLocations.forEach((dotLocation: DotLocation) => {
@@ -47,7 +47,7 @@ export class RandomNumbersViewComponent implements OnInit {
   drawDot(dotLocation: DotLocation) {
     this.ctx.fillStyle = 'red';
     const dot = new Dot(this.ctx);
-    dot.draw(dotLocation.x, dotLocation.y, 20);
+    dot.draw(dotLocation.x, dotLocation.y, this.circleSize);
     console.log('Drawing dot in:', dotLocation.x, dotLocation.y)
   }
 
