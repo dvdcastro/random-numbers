@@ -1,26 +1,48 @@
-<canvas #canvas width="{{canvasWidth}}" height="{{canvasHeight}}"></canvas>
-<br>
-<label for="amountInput">Dot Amount:</label>
-<input id="amountInput" [(ngModel)]="amount" />
-<br>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <canvas #canvas width="{{canvasWidth}}" height="{{canvasHeight}}"></canvas>
+    </div>
+  </div>
+  <div class="row d-print-none">
+    <div class="col">
+      <form>
+        <div class="form-group">
+          <label for="amountInput">Dot Amount:</label>
+          <input id="amountInput" class="form-control" [(ngModel)]="amount" name="amount" type="number"/>
+        </div>
 
-<label for="radiusInput">Circle size:</label>
-<input id="radiusInput" [(ngModel)]="circleSize" />
-<br>
+        <div class="form-group">
+          <label for="radiusInput">Circle size:</label>
+          <input id="radiusInput" class="form-control" [(ngModel)]="circleSize" name="circleSize" type="number"/>
+        </div>
+
+        <div class="form-group">
+          <label for="borderInput">Margin size:</label>
+          <input id="borderInput" class="form-control" [(ngModel)]="margin" name="margin" type="number"/>
+        </div>
+
+        <div class="form-group">
+          <label for="canvasWidth">Canvas Width:</label>
+          <input id="canvasWidth" class="form-control" [(ngModel)]="canvasWidth" name="canvasWidth" type="number"/>
+        </div>
+
+        <div class="form-group">
+          <label for="canvasHeight">Canvas Height:</label>
+          <input id="canvasHeight" class="form-control" [(ngModel)]="canvasHeight" name="canvasHeight" type="number"/>
+        </div>
+
+        <button class="btn btn-primary" type="submit" (click)="generate()">Generate</button>
+        <button class="btn btn-primary" type="submit" (click)="generateDescendingImages()">Generate descending images</button>
+      </form>
+    </div>
+  </div>
+  <div class="row" *ngFor="let image of images; let imgIdx = index;">
+    <div class="col">
+      <img [src]="image" />
+    </div>
+  </div>
+</div>
 
 
-<label for="borderInput">Border size:</label>
-<input id="borderInput" [(ngModel)]="border" />
-<br>
 
-
-<label for="canvasWidth">Dot Amount:</label>
-<input id="canvasWidth" [(ngModel)]="canvasWidth" />
-<br>
-
-
-<label for="canvasHeight">Dot Amount:</label>
-<input id="canvasHeight" [(ngModel)]="canvasHeight" />
-<br>
-
-<button (click)="generate()">Generate</button>

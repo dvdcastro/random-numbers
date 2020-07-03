@@ -1,1 +1,10 @@
-canvas { border-style: solid }
+canvas {
+  border-style: solid;
+}
+
+@media print {
+  canvas {
+    border-style: none;
+    border-bottom: solid;
+  }
+}

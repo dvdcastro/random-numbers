@@ -14,26 +14,29 @@ export class RandomNumbersService {
   constructor() {
   }
 
-  getLocations(amount: number, border: number, width: number, height: number): Observable<DotLocation[]> {
+  getLocations(amount: number, margin: number, width: number, height: number): Observable<DotLocation[]> {
     this.locations = [];
     this.invalidLocations = [];
 
     let res: DotLocation[] = [];
     for (let i = 0; i < amount; i++) {
-      res.push(this.generateLocation((+border), width, height));
+      res.push(this.generateLocation((+margin), width, height));
     }
     return of(res);
   }
 
-  private generateLocation(border: number, width: number, height: number): DotLocation {
-    const maxWidth = width - ((+border) * 2);
-    const maxHeight = height - ((+border) * 2);
-    let x: number = (+border) + Math.floor(Math.random() * maxWidth);
-    let y: number = (+border) + Math.floor(Math.random() * maxHeight);
+  private generateLocation(margin: number, width: number, height: number): DotLocation {
+    const maxWidth = width - ((+margin) * 2);
+    const maxHeight = height - ((+margin) * 2);
+    let x: number = (+margin) + Math.floor(Math.random() * maxWidth);
+    let y: number = (+margin) + Math.floor(Math.random() * maxHeight);
 
-    while (!this.isLocationValid(x, y, border)) {
-      x = (+border) + Math.floor(Math.random() * maxWidth);
-      y = (+border) + Math.floor(Math.random() * maxHeight);
+    const maxIterations = (maxWidth * maxHeight) * 10;
+    let count = 1;
+    while (!this.isLocationValid(x, y, margin) && count < maxIterations) {
+      x = (+margin) + Math.floor(Math.random() * maxWidth);
+      y = (+margin) + Math.floor(Math.random() * maxHeight);
+      count ++;
     }
 
     const res = {x, y};
@@ -41,17 +44,17 @@ export class RandomNumbersService {
     return res;
   }
 
-  private isLocationValid(x: number, y: number, border: number): boolean {
+  private isLocationValid(x: number, y: number, padding: number): boolean {
     // Review index first.
     if (this.invalidLocations[x] && this.invalidLocations[x][y]) {
       return false;
     }
 
-    // Is the distance between this dot and the rest lower than the border.
+    // Is the distance between this dot and the rest lower than the padding.
     for (let i in this.locations) {
       const loc = this.locations[i];
       const d = Math.sqrt(Math.pow(x - loc.x, 2) + Math.pow(y - loc.y, 2));
-      if (d < border) {
+      if (d < padding) {
         // Add to index.
         if (!this.invalidLocations[x]) {
           this.invalidLocations[x] = [];

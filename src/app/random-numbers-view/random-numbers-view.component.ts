@@ -15,10 +15,11 @@ export class RandomNumbersViewComponent implements OnInit {
   amount: number = 100;
 
   private ctx: CanvasRenderingContext2D;
-  canvasWidth: number = 800;
-  canvasHeight: number = 800;
-  circleSize: number = 20;
-  border: number = 40;
+  canvasWidth: number = 950;
+  canvasHeight: number = 950;
+  circleSize: number = 64.5;
+  margin: number = 70;
+  images: string[] = [];
 
   constructor(
     private randomNumbersService: RandomNumbersService
@@ -26,29 +27,55 @@ export class RandomNumbersViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx = this.canvas.nativeElement.getContext('2d');
-    this.generate();
   }
 
   generate() {
-    this.randomNumbersService.getLocations(this.amount, this.border, this.canvasWidth, this.canvasHeight)
+    this.randomNumbersService.getLocations(this.amount, this.margin, this.canvasWidth, this.canvasHeight)
       .subscribe((dotLocations : DotLocation[]) => {
-      this.cleanCanvas();
+      this.cleanCanvas(this.ctx);
       dotLocations.forEach((dotLocation: DotLocation) => {
-        this.drawDot(dotLocation);
+        this.drawDot(this.ctx, dotLocation);
       });
     });
   }
 
-  cleanCanvas() {
-    const canvas = this.ctx.canvas;
-    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+  async generateDescendingImages() {
+    for (let i = this.amount; i >= 1; i--) {
+      const canvas = document.createElement('canvas');
+      canvas.width = this.canvasWidth;
+      canvas.height = this.canvasHeight;
+      const ctx = canvas.getContext('2d');
+      this.randomNumbersService.getLocations(i, this.margin, this.canvasWidth, this.canvasHeight)
+        .subscribe((dotLocations : DotLocation[]) => {
+          this.cleanCanvas(ctx);
+          for (let dl in dotLocations) {
+            this.drawDot(ctx, dotLocations[dl]);
+          }
+          const link = document.createElement('a');
+          const id = `${i}`.padStart(4, '0');
+          link.download = `rn_${id}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        });
+      await this.sleep(1000);
+    }
   }
 
-  drawDot(dotLocation: DotLocation) {
-    this.ctx.fillStyle = 'red';
-    const dot = new Dot(this.ctx);
+  private sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  cleanCanvas(ctx: CanvasRenderingContext2D) {
+    const canvas = ctx.canvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  drawDot(ctx: CanvasRenderingContext2D, dotLocation: DotLocation) {
+    ctx.fillStyle = 'red';
+    const dot = new Dot(ctx);
     dot.draw(dotLocation.x, dotLocation.y, this.circleSize);
-    console.log('Drawing dot in:', dotLocation.x, dotLocation.y)
   }
 
 
